@@ -2,7 +2,7 @@ import os
 import sys
 from dataclasses import dataclass
 
-from src.MlProject.logger import logger
+from src.MlProject.logger import logging
 from src.MlProject.exception import CustomException
 from src.MlProject.utils import save_obj
 
@@ -13,36 +13,39 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
 
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path:str=os.path.join('artifacts','preprosesor.pkl')
+    preprocessor_obj_file_path:str=os.path.join('artifacts','preprocessor.pkl')
 
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig()
 
-    try:
-        def get_data_transformation_obj(self):
+    
+    def get_data_transformation_obj(self):
+      try:
+         
+           cata_features=["gender","race_ethnicity","parental_level_of_education","lunch","test_preparation_course"]
+           num_feature=["writing_score", "reading_score"]
 
-         cata_features=["gender","race_ethnicity","parental-level_of_education","lunch","test_preparation_score"]
-         num_feature=["writing_score",'reading_score']
-
-         cata_pipeline=Pipeline(steps=[("imputer",SimpleImputer(strategy="most_frequent")),
+           cata_pipeline=Pipeline(steps=[("imputer",SimpleImputer(strategy="most_frequent")),
                                        ("encoder",OneHotEncoder()),
                                        ("scalling",StandardScaler(with_mean=False))])
 
-         num_pipeline=Pipeline(steps=[("imputer",SimpleImputer(strategy="median")),
+           num_pipeline=Pipeline(steps=[("imputer",SimpleImputer(strategy="median")),
                                       ("scalling",StandardScaler())])   
 
-        # transforming Column
-         preprocessor=ColumnTransformer(transformers=[("cata_pipeline",cata_pipeline,cata_features),
+           # transforming Column
+           preprocessor=ColumnTransformer(transformers=[("cata_pipeline",cata_pipeline,cata_features),
                                                        ("num_pipeline",num_pipeline,num_feature)])
 
 
-         return preprocessor
-    except Exception as e:
-        raise CustomException(e,sys)
+           return preprocessor
+      except Exception as e:
+         raise CustomException(e,sys)
 
     
     try:

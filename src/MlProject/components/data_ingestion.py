@@ -5,7 +5,9 @@ from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 import pandas as pd
 from src.MlProject.exception import CustomException
-from src.MlProject.logger import logger
+from src.MlProject.logger import logging
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class DataIngestionConfig:
